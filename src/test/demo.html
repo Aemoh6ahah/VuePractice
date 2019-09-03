@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+    </style>
+</head>
+<body>
+<script type="text/javascript">
+    let arr = [1,2,3,4,5,6,7,8,9,0]
+    function cutArr(arr,length) {
+        let bigArr=[]
+        let bigArrL = Math.ceil(arr.length/length)
+        let samllArr=[]
+        for(let j=0;j<bigArrL;j++){
+            for(let k=0;k<length;k++){
+                console.log((j*length+k)>=arr.length)
+                if ((j*length+k)>=arr.length) {break}
+                samllArr.push(arr[j*length+k])
+            }
+            bigArr.push(samllArr)
+            samllArr = []
+        }
+        return bigArr
+    }
+
+    console.log(foo(arr, 3))
+</script>
+<script type="text/javascript">
+    <swiper-slide class="swiper-slide"  v-for="(page,index) in store.state.foodList" :key="index">
+        <div class="banner-item" v-for="(item,keyNum) in page[index]" :key = "keyNum">
+        <img :src="`https://fuss10.elemecdn.com`+item.image_url" :alt="item.title">
+        <span>{{item.title}}</span>
+    </div>
+    </swiper-slide>
+</script>
+</body>
+</html>
