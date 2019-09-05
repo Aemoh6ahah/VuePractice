@@ -13,12 +13,12 @@
           <form>
             <div :class="this.isPhone">
               <section class="login_message" >
-                <input type="tel" maxlength="11" placeholder="手机号"  v-validate="'required|phone'" name="phone" v-model:value="phone">
+                <input type="tel" maxlength="11" placeholder="手机号"  v-validate="'required|phone'" name="phone" v-model="phone">
                 <button :disabled="!isRightPhone" class="get_verification" :class="isRightPhoneSyt" @click="sendCode">获取验证码</button>
                 <span v-show="errors.has('phone')" class="help is-danger">{{ errors.first('phone') }}</span>
               </section>
               <section class="login_verification">
-                <input type="tel" maxlength="8" placeholder="验证码" v-validate="'required|code'" name="code">
+                <input type="tel" maxlength="8" placeholder="验证码" v-validate="'required|code'" name="code" v-model="code">
                 <span v-show="errors.has('code')" class="help is-danger">{{ errors.first('code') }}</span>
               </section>
               <section class="login_hint">
@@ -29,11 +29,11 @@
             <div :class="this.isUser">
               <section>
                 <section class="login_message">
-                  <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名"  v-validate="'required|user'" name="user"  value="">
+                  <input type="tel" maxlength="11" placeholder="手机/邮箱/用户名"  v-validate="'required|user'" name="user"  v-model="user">
                   <span v-show="errors.has('user')" class="help is-danger">{{ errors.first('user') }}</span>
                 </section>
                 <section class="login_verification">
-                  <input :type="isPsw" maxlength="8" placeholder="密码">
+                  <input :type="isPsw" maxlength="8" placeholder="密码" v-model="psw">
 
                   <div class="switch_button" :class="switchBtn" @click="inHide=!inHide">
                     <div class="switch_circle" :class="switchBtn"></div>
@@ -41,7 +41,7 @@
                   </div>
                 </section>
                 <section class="login_message">
-                  <input type="text" maxlength="11" placeholder="验证码"  v-validate="'required|captcha'" name="captcha">
+                  <input type="text" maxlength="11" placeholder="验证码"  v-validate="'required|captcha'" name="captcha" v-model="captcha">
                   <img class="get_verification" ref="verify" src="http://localhost:5000/captcha" alt="captcha" @click="changeImge">
                   <span v-show="errors.has('captcha')" class="help is-danger">{{ errors.first('captcha') }}</span>
                 </section>
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-  import {getCode} from '../api'
+  import {getCode,reqUserInfo} from '../api'
   export default {
       name: "Login",
     mounted(){
@@ -71,8 +71,9 @@
           inHide:false,
           phone:'',//手机号
           code:'',//短信验证码
+          psw:"",
           user:'',//用户名
-
+          captcha:'',//图形验证码
         })
 
     },
@@ -80,8 +81,23 @@
       changeImge(){
         this.$refs.verify.src = `http://localhost:5000/captcha?a=${Date.now()}`
       },
-      handleLogin(){
-        console.log(this.phone)
+      async handleLogin(){
+        //进行统一验证
+        const {phone,code,psw,user,captcha,isShow }=this
+        //需要校验的数组
+        let checkMsg
+        checkMsg = isShow?[phone,code]:[psw,user,captcha]
+        const success = await this.$validator.validateAll(checkMsg)
+        if (success&&isShow) {//校验通过同时是手机号登录
+          this.$store.dispatch("phoneEnter",{phone:phone,code:code})
+        }else if (success&&!isShow) {//校验通过同时是用户名登录
+          await this.$store.dispatch("userEnter",{name:user,pwd:psw,captcha:captcha},this)
+          let res = await reqUserInfo()
+          if (res.code===0){
+            this.$store.commit("setUserInfo",res.data)
+            this.$router.push('/profile')
+          }
+        }
       },
       sendCode(){
         getCode(this.phone)

@@ -35,7 +35,7 @@ Validator.extend('captcha', {
 Validator.extend('user', {
     getMessage: (field, [args]) => `用户名不合法`,
     validate: (value, [args]) =>{
-        const reg = /^\w{4}$/
+        const reg = /^\w{4,}$/
         return reg.test(value)
     }
 });

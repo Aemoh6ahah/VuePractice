@@ -7,14 +7,20 @@
 
 <script>
   import FooterGuide from './components/FooterGuide/FooterGuide'
-  import {getLocation} from './api'
+  import {reqUserInfo} from './api/index'
 export default {
   name:'App',
   components:{
     FooterGuide,
   },
-
-
+  async mounted() {
+    console.log('App')
+    this.$store.dispatch("misteMounted")
+    let res = await reqUserInfo()
+    if (res.code===0){
+      this.$store.commit("setUserInfo",res.data)
+    }
+  },
 }
 </script>
 <style scoped lang="stylus" ref="stylesheet/stylus">

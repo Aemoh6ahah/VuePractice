@@ -6,7 +6,8 @@
     </div>
     <div class="shop_container">
       <ul class="shop_list">
-        <li class="shop_li border-1px" v-for="(item,index) in $store.state.shopList" :key="index">
+        <li class="shop_li border-1px" v-for="(item,index) in $store.state.shopList" :key="index" @click="setIndex(index)">
+            <router-link :to="'/shop?index='+index">
           <a>
             <div class="shop_left">
               <img class="shop_img" :src="`https://fuss10.elemecdn.com`+item.image_path">
@@ -22,13 +23,6 @@
               </section>
               <section class="shop_rating_order">
                 <section class="shop_rating_order_left">
-<!--                  <div class="star star-24">-->
-<!--                    <span class="star-item on"></span>-->
-<!--                    <span class="star-item on"></span>-->
-<!--                    <span class="star-item on"></span>-->
-<!--                    <span class="star-item half"></span>-->
-<!--                    <span class="star-item off"></span>-->
-<!--                  </div>-->
                   <Stars size="24" :score="item.rating"/>
                   <div class="rating_section">
                     {{item.rating}}
@@ -50,6 +44,7 @@
               </section>
             </div>
           </a>
+            </router-link>
         </li>
       </ul>
     </div>
@@ -62,7 +57,12 @@
       name: "ShopList",
       components:{
         Stars,
-      }
+      },
+        methods:{
+          setIndex:function (index) {
+              this.$store.commit('setShopIndex',index)
+          }
+        }
     }
 </script>
 

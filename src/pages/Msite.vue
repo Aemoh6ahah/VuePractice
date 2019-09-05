@@ -4,7 +4,7 @@
       <i class="iconfont icon-search"></i>
       <span v-show="$store.state.headerState===0" class="header-local">正在定位...</span>
       <span v-show="$store.state.headerState===1" class="header-local">{{$store.state.address}}</span>
-      <router-link to="/login" class="header-login">登录丨注册 </router-link>
+      <router-link :to="$store.state.userInfo._id?'/profile':'/login'" class="header-login">{{$store.state.userInfo._id?$store.state.userInfo.name?$store.state.userInfo.name:$store.state.userInfo.phone:"登录/注册"}}</router-link>
     </header>
     <Swiper/>
     <ShopList/>
@@ -26,8 +26,7 @@
           state:0
         })
       },
-      async mounted() {
-        this.$store.dispatch("misteMounted")
+      computed:{
       }
     }
 </script>
@@ -36,7 +35,7 @@
 .header
   width 100%
   position fixed
-  z-index 10
+  z-index 210
   height  50px
   background-color #02a774
   line-height 50px

@@ -13,7 +13,7 @@
           </div>
           <div class="user-info">
 
-            <p class="user-info-top">登录/注册</p>
+            <p class="user-info-top">{{$store.state.userInfo._id?$store.state.userInfo.name?$store.state.userInfo.name:$store.state.userInfo.phone:"登录/注册"}}</p>
             <p>
                 <span class="user-icon">
                   <i class="iconfont icon-shouji icon-mobile"></i>
@@ -93,17 +93,30 @@
               </span>
           </div>
         </a>
+        <mt-button size="large" type="danger" @click="handleOut" v-show="showBtn">退出</mt-button>
       </section>
     </section>
   </div>
 </template>
 
 <script>
+  import {userLogout} from '../api'
     export default {
       name: "ProFile",
-      methods:{
+      components:{
 
-      }
+      },
+      methods:{
+        handleOut:function(){
+          this.$store.commit('userOut')
+          userLogout()
+        }
+      },
+      computed:{
+        showBtn(){
+          return this.$store.state.userInfo._id
+        }
+      },
     }
 </script>
 

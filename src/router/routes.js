@@ -3,6 +3,10 @@ import Search from '../pages/Search'
 import Order from '../pages/Order'
 import Login from '../pages/Login'
 import ProFile from '../pages/ProFile'
+import Shop from '../pages/Shop/Shop'
+import Ratings from '../pages/Shop/Ratings'
+import Goods from '../pages/Shop/Goods'
+import Info from '../pages/Shop/Info'
 export default {
   routes:[
     {
@@ -41,8 +45,28 @@ export default {
       },
     },
     {
+      path:'/shop',
+      component:Shop,
+      children:[
+        {
+          path:'/shop/goods',
+          component:Goods
+        },
+        {
+          path:'/shop/ratings',
+          component:Ratings
+        },
+        {
+          path:'/shop/info',
+          component:Info
+        },
+      ],
+      redirect:'/shop/goods'
+    },
+    {
       path:'/',
       redirect:'/msite'
-    }
+    },
+
   ]
 }

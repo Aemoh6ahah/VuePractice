@@ -39,9 +39,10 @@
   height 60px
   position fixed
   left 0
-  bottom 0
+  bottom -1px
   display flex
   background-color: #fff
+  z-index 210
   .footer-item
     display flex
     justify-content center

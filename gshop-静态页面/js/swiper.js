@@ -6016,7 +6016,7 @@ var Lazy = {
       $imageEl.addClass(params.loadingClass);
 
       var background = $imageEl.attr('data-background');
-      var src = $imageEl.attr('data-src');
+      var src = $imageEl.attr('data-src_0903');
       var srcset = $imageEl.attr('data-srcset');
       var sizes = $imageEl.attr('data-sizes');
 
@@ -6036,7 +6036,7 @@ var Lazy = {
           }
           if (src) {
             $imageEl.attr('src', src);
-            $imageEl.removeAttr('data-src');
+            $imageEl.removeAttr('data-src_0903');
           }
         }
 
