@@ -27,19 +27,78 @@ export default {
         state.goods = goods
     },
     //往购物车数组添加食物
-    "addFood"(state,good){
-        state.shopCar.push(good)
-    },
+  "addFood"(state,good){
+    let targetName = good.name
+    let hasTarget = true
+    if (state.shopCar.length){
+      state.shopCar.forEach((item)=>{
+        if (item.name===targetName){
+          hasTarget = false
+          item.count++
+        }
+      })
+    }
+    if (hasTarget){
+      good.count = 1
+      state.shopCar.push(good)
+      Array.prototype.indexOf=function(val){
+        for(let i=0;i<state.shopCar.length;i++){
+          if (state.shopCar[i].name===val){
+            return i
+          }
+        }
+        return -1
+      }
+      state.carItemIndex[targetName] = state.shopCar.indexOf(targetName)
+    }
+  },
+    // "addFood"(state,good){
+    //   let targetName = good.name
+    //   let hasTarget = true
+    //   if (state.shopCar.length){
+    //     state.shopCar.forEach((item)=>{
+    //       if (item.name===targetName){
+    //         hasTarget = false
+    //         item.count++
+    //       }
+    //     })
+    //   }
+    //   if (hasTarget){
+    //     good.count = 1
+    //     state.shopCar.push(good)
+    //     Array.prototype.indexOf=function(val){
+    //       for(let i=0;i<state.shopCar.length;i++){
+    //         if (state.shopCar[i].name===val){
+    //           return i
+    //         }
+    //       }
+    //       return -1
+    //     }
+    //     state.shopIndex[targetName] = state.shopCar.indexOf(targetName)
+    //   }
+    // },
     //减少购物车数组中的食物
-    "removeFood"(state,foodId){
-        state.shopCar.forEach((food,index)=>{
-            if (food.foodID){
-                if (food.count===1){//如果food的数量为1 从购物车数组中移除
-                    state.shopCar.splice(index,1)
-                }
-                food.count--
-            }
-        })
+    "removeFood"(state,{foodIndex,foodName}){
+      state.shopCar[foodIndex].count--
+      if (state.shopCar[foodIndex].count===0){
+        delete state.carItemIndex[foodName]
+        state.shopCar.splice(foodIndex,1)
+      }
     },
+  //展示商品详情页
+  "showFood"(state){
+      state.isShowFood = true
+  },
+  //隐藏商品详情
+  "hideFood"(state){
+      state.isShowFood = false
+  },
+  //设置、修改 food对象
+  "setFood"(state,{foodIndex:foodIndex,goodIndex:goodIndex,foodName:foodName}){
+    state.foodObj = {foodIndex:foodIndex,goodIndex:goodIndex,foodName:foodName}
+  },
+  "clearFoodCar"(state){
+    state.foodCar = []
+  }
 }
 

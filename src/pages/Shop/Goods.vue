@@ -1,7 +1,7 @@
 <template>
     <div >
         <div class="goods">
-            <div class="menu-wrapper wrapper">
+            <div class="menu-wrapper">
                 <ul class="content good-content">
                     <li class="menu-item" @click="changeFood(index)" v-for="(goods,index) in $store.state.goods" :key="index" :class="{'current':index===nowGoodIndex}">
                         <img class="icon" v-show="goods.icon" :src="goods.icon">
@@ -9,28 +9,27 @@
                     </li>
                 </ul>
             </div>
-            <div class="foods-wrapper wrapper1" >
+            <div class="foods-wrapper" >
                 <ul class="content food-content">
-                    <li class="food-list-hook " v-for="(goods,goodIndex) in $store.state.goods" :key="goodIndex">
+                    <li class="food-list-hook " v-for="(goods,goodIndex) in $store.state.goods" :key="goodIndex" >
                         <h1 class="title">{{goods.name}}</h1>
                         <ul>
-                            <li class="food-item bottom-border-1px" v-for="(foods,foodIndex) in goods.foods" :key="foodIndex">
+                            <li class="food-item bottom-border-1px" v-for="(food,foodIndex) in goods.foods" :key="foodIndex">
                                 <div class="icon">
-                                    <img width="57" height="57"
-                                         :src="foods.icon">
+                                    <img width="57" height="57" :src="food.icon" @click="showFood(foodIndex,goodIndex,food.name)">
                                 </div>
                                 <div class="content">
-                                    <h2 class="name">{{foods.name}}</h2>
-                                    <p class="desc">{{foods.description}}</p>
+                                    <h2 class="name">{{food.name}}</h2>
+                                    <p class="desc">{{food.description}}</p>
                                     <div class="extra">
-                                        <span class="count">{{foods.sellCount}}</span>
-                                        <span>好评率{{foods.rating}}%</span></div>
+                                        <span class="count">{{food.sellCount}}</span>
+                                        <span>好评率{{food.rating}}%</span></div>
                                     <div class="price">
-                                        <span class="now">￥{{foods.price}}</span>
-                                        <span class="old" v-show="foods.oldPrice">￥{{foods.oldPrice}}</span>
+                                        <span class="now">￥{{food.price}}</span>
+                                        <span class="old" v-show="food.oldPrice">￥{{food.oldPrice}}</span>
                                     </div>
                                     <div class="cartcontrol-wrapper">
-                                        <CartControl :foodIndex="foodIndex" :goodIndex="nowGoodIndex"/>
+                                        <CartControl :foodIndex="foodIndex" :goodIndex="goodIndex" :name="food.name"/>
                                     </div>
                                 </div>
                             </li>
@@ -40,18 +39,21 @@
             </div>
         </div>
         <ShopCar/>
+        <Food />
     </div>
 </template>
 
 <script>
     import BScroll from 'better-scroll'
-    import CartControl from './CartControl'
-    import ShopCar from './ShopCar'
+    import CartControl from './shopCar/CartControl'
+    import ShopCar from './shopCar/ShopCar'
+    import Food from './Food'
     export default {
         name: "Goods",
         components:{
             CartControl,
-            ShopCar
+            ShopCar,
+            Food,
         },
         data(){
             return ({
@@ -74,50 +76,63 @@
              if (!this.scroll){
                  this._initBscroll()
              }
-             console.log(this.foodTops.length)
              if (!this.foodTops.length&&!this.goodTops.length){
                  this.fun()
              }
-             //将左右的最大滚动距离存入data
-             let goodWrapper = document.querySelector('.menu-wrapper')
-             let foodWrapper = document.querySelector('.foods-wrapper')
-             let goodContent = document.querySelector('.good-content')
-             let foodContent = document.querySelector('.food-content')
-             this.maxGood = (goodWrapper.clientHeight-goodContent.clientHeight)
-             this.maxFood = (foodWrapper.clientHeight-foodContent.clientHeight)
+
          },
         methods:{
             fun:function () {
+              //将左右的最大滚动距离存入data
+              let goodWrapper = document.querySelector('.menu-wrapper')
+              let foodWrapper = document.querySelector('.foods-wrapper')
+              let goodContent = document.querySelector('.good-content')
+              let foodContent = document.querySelector('.food-content')
+              this.maxGood = (goodWrapper.clientHeight-goodContent.clientHeight)
+              this.maxFood = (foodWrapper.clientHeight-foodContent.clientHeight)
                 let top = 0
                 let top1 = 0
                 let goodsList= document.querySelectorAll('.menu-item')
                 let foodList = document.querySelectorAll('.food-list-hook')
                 Array.prototype.slice.call(foodList).forEach((item,index)=>{
                     top+=item.clientHeight
-                    this.foodTops.push(top)
+                    this.foodTops.push(-top)
                     if (this.foodTops.length===foodList.length) {
                         this.foodTops.unshift(0)
                     }
                 })
                 Array.prototype.slice.call(goodsList).forEach((item,index)=>{
                     top1+=item.clientHeight
-                    this.goodTops.push(top1)
+                    this.goodTops.push(-top1)
                     if (this.goodTops.length===goodsList.length) {
                         this.goodTops.unshift(0)
                     }
                 })
             },
             async _initBscroll(){
-                this.scroll = await new BScroll('.wrapper',{click:true,})
-                this.scroll1 = await new BScroll('.wrapper1',{click:true,probeType:2})
+                this.scroll = await new BScroll('.menu-wrapper',{click:true,})
+                this.scroll1 = await new BScroll('.foods-wrapper',{click:true,probeType:2})
                 this.scroll1.on('scroll',this.setFoodY)
             },
             changeFood:function (index) {
-                this.nowGoodIndex=index*1
-                this.scroll1.scrollTo(0,-this.foodTops[index],200)
+              this.nowGoodIndex = index
+              this.scroll1.scrollTo(0,this.foodTops[index],200)
             },
             setFoodY(pos){
-                this.nowFood=pos.y
+              let nowFood=pos.y
+              for(let i=0;i<this.foodTops.length;i++){
+                  if (nowFood<this.foodTops[i]&&nowFood>this.foodTops[i+1]) {
+                    this.nowGoodIndex = i
+                    if (this.goodTops[i]>this.maxGood){
+                      this.scroll.scrollTo(0,this.goodTops[i],200)
+                    }
+                    break
+                  }
+              }
+            },
+            showFood(foodIndex,goodIndex,foodName){
+              this.$store.commit('showFood')
+              this.$store.commit("setFood",{foodIndex:foodIndex,goodIndex:goodIndex,foodName:foodName})
             }
         },
         watch:{
@@ -132,16 +147,7 @@
                 })
             },
             nowFood(){
-                this.foodTops.forEach((item,index)=>{
-                    if ((-this.nowFood)>=item&&(-this.nowFood)<this.foodTops[index+1]){
-                        if (-this.goodTops[index]>this.maxGood){
-                            this.scroll.scrollTo(0,-this.goodTops[index],200)
-                        }else if(-this.goodTops[index]<this.maxGood){
-                            this.scroll.scrollTo(0,-this.maxGood,200)
-                        }
-                        this.nowFoodIndex=index*1
-                    }
-                })
+              console.log('nowFood is changing')
             }
         },
         computed:{
@@ -153,6 +159,7 @@
 </script>
 <style scoped lang="stylus" ref="stylesheet/stylus">
     @import "../stylus/mixins.styl"
+    $green = #02a774
     .goods
         display: flex
         position: absolute

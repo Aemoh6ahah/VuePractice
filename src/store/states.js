@@ -11,4 +11,9 @@ export default {
   goods:[],
   //购物车数组
   shopCar:[],
+  carItemIndex:{},
+  //是否显示Food组件
+  isShowFood:false,
+  //Food组件内容所需对象。
+  foodObj:{foodIndex:'',goodIndex:'',foodName:''},
 }

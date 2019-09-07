@@ -4,54 +4,94 @@
             <div class="content">
                 <div class="content-left">
                     <div class="logo-wrapper">
-                        <div class="logo highlight">
-                            <i class="iconfont icon-shopping_cart highlight"></i>
+                        <div class="logo " :class="carCount?'highlight':''" @click="showMask">
+                            <i class="iconfont icon-shopping_cart" :class="carCount?'highlight':''"></i>
                         </div>
-                        <div class="num">1</div>
+                        <div class="num" v-show="carCount">{{carCount}}</div>
                     </div>
-                    <div class="price highlight">￥10</div>
+                    <div class="price" :class="carCount?'highlight':''">￥{{priceCount}}</div>
                     <div class="desc">另需配送费￥4元</div>
                 </div>
                 <div class="content-right">
-                    <div class="pay not-enough">
-                        还差￥10元起送
+                    <div class="pay " :class="priceCount>10?'enough':'not-enough'">
+                        {{priceCount>10?'结算':'还差￥'+(10-priceCount)+'元起送'}}
                     </div>
                 </div>
             </div>
-            <div class="shopcart-list" style="display: none;">
+            <div class="shopcart-list" :class="isShowMask?'show':''">
                 <div class="list-header">
                     <h1 class="title">购物车</h1>
-                    <span class="empty">清空</span>
+                    <span class="empty" @click="clearAll">清空</span>
                 </div>
                 <div class="list-content">
                     <ul>
-                        <li class="food">
-                            <span class="name">红枣山药糙米粥</span>
-                            <div class="price"><span>￥10</span></div>
+                        <li class="food" v-for="(food,index) in shopCar" :key="index">
+                            <span class="name">{{food.name}}</span>
+                            <div class="price"><span>￥{{food.price}}</span></div>
                             <div class="cartcontrol-wrapper">
-                                <div class="cartcontrol">
-                                    <div class="iconfont icon-remove_circle_outline"></div>
-                                    <div class="cart-count">1</div>
-                                    <div class="iconfont icon-add_circle"></div>
-                                </div>
+                              <CartControl :foodIndex="food.foodIndex" :goodIndex="food.goodIndex" :name="food.name"/>
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="list-mask" style="display: none;"></div>
+        <div class="list-mask" v-show="isShowMask" @click="hideMask"></div>
     </div>
 </template>
 
 <script>
+    import {mapState} from 'vuex'
+    import CartControl from './CartControl'
     export default {
-        name: "ShopCar"
+      name: "ShopCar",
+      components:{
+        CartControl,
+      },
+      methods:{
+        showMask:function () {
+          if (!this.carCount){
+            return false
+          } 
+          console.log('111')
+          this.isShowMask = !this.isShowMask
+        },
+        hideMask(){
+          this.isShowMask = false
+        },
+        clearAll:function () {
+          this.$store.commit("clearFoodCar")
+          this.isShowMask = false
+        }
+      },
+      data(){
+        return({
+          isShowMask:false
+        })
+      },
+      computed:{
+        ...mapState(['shopCar']),
+        carCount(){
+          let count = 0
+          this.shopCar.forEach((item)=>{
+            count+=item.count
+          })
+          return count
+        },
+        priceCount(){
+          let price = 0
+          this.shopCar.forEach((item)=>{
+            price+=item.price*item.count
+          })
+          return price
+        }
+      }
     }
 </script>
 
 <style scoped lang="stylus" ref="stylesheet/stylus">
-    @import "../../common/stylus/mixins.styl"
+    @import "../../../common/stylus/mixins.styl"
+    $green = #02a774
     .shopcart
         position: fixed
         left: 0
@@ -158,7 +198,8 @@
                     float: right
                     font-size: 12px
                     color: rgb(0, 160, 220)
-
+        .show
+            transform translateY(-100%)
             .list-content
                 padding: 0 18px
                 max-height: 217px
