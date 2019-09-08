@@ -1,8 +1,8 @@
 <template>
     <div class="cartcontrol">
         <div class="iconfont icon-remove_circle_outline" @click="removeFood" v-show="count1"></div>
-        <div class="cart-count" v-show="count1" >{{count1}}</div>
-        <div class="iconfont icon-add_circle" @click.stop="addFood"></div>
+        <div class="cart-count" v-show="count1" >{{count1?count1:''}}</div>
+        <div class="iconfont icon-add_circle" @click="addFood"></div>
     </div>
 </template>
 
@@ -12,14 +12,15 @@
       name: "CartControl",
       data(){
         return({
+
         })
       },
       mounted(){
 
       },
-      
       methods:{
         addFood(){
+            console.log('11111')
           let carItem = {}
           carItem.name = this.$store.state.goods[this.goodIndex].foods[this.foodIndex].name
           carItem.price = this.$store.state.goods[this.goodIndex].foods[this.foodIndex].price
@@ -35,13 +36,17 @@
       props:['foodIndex','goodIndex','name'],
       computed:{
         ...mapState(['carItemIndex','shopCar']),
-        count1(){
-          return this.shopCar[this.carItemIndex[this.name]]?this.shopCar[this.carItemIndex[this.name]].count:''
-        }
+        showBtn(){
+            let name = this.name
+            return   this.$store.state.carItemIndex[name]
+        },
+          count1(){
+              let name = this.name
+              return this.shopCar[this.carItemIndex[name]]?this.shopCar[this.carItemIndex[name]].count:''
+          },
       },
       watch:{
-        count1:function () {
-        }
+
       }
 
     }
@@ -80,4 +85,5 @@
             line-height: 24px
             font-size: 24px
             color $green
+
 </style>

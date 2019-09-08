@@ -49,7 +49,9 @@ export default {
         }
         return -1
       }
-      state.carItemIndex[targetName] = state.shopCar.indexOf(targetName)
+        state.shopCar.forEach((item)=>{
+            state.carItemIndex[item.name] = state.shopCar.indexOf(item.name)
+        })
     }
   },
     // "addFood"(state,good){
@@ -82,7 +84,18 @@ export default {
       state.shopCar[foodIndex].count--
       if (state.shopCar[foodIndex].count===0){
         delete state.carItemIndex[foodName]
-        state.shopCar.splice(foodIndex,1)
+          state.shopCar.splice(foodIndex,1)
+          Array.prototype.indexOf=function(val){
+              for(let i=0;i<state.shopCar.length;i++){
+                  if (state.shopCar[i].name===val){
+                      return i
+                  }
+              }
+              return -1
+          }
+          state.shopCar.forEach((item)=>{
+              state.carItemIndex[item.name] = state.shopCar.indexOf(item.name)
+          })
       }
     },
   //展示商品详情页
@@ -98,7 +111,8 @@ export default {
     state.foodObj = {foodIndex:foodIndex,goodIndex:goodIndex,foodName:foodName}
   },
   "clearFoodCar"(state){
-    state.foodCar = []
+    state.shopCar = []
+    state.carItemIndex = {}
   }
 }
 

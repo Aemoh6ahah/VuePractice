@@ -43,6 +43,7 @@
 <script>
     import {mapState} from 'vuex'
     import CartControl from './CartControl'
+    import BScroll from 'better-scroll'
     export default {
       name: "ShopCar",
       components:{
@@ -69,6 +70,9 @@
           isShowMask:false
         })
       },
+        mounted(){
+          this.scroll1 = new BScroll('.list-content',{click:true,})
+        },
       computed:{
         ...mapState(['shopCar']),
         carCount(){
