@@ -23,3 +23,5 @@ export const userLogout = ()=>ajax(BASE+`/logout`)
 export const testMock = ()=>ajax('/shop/test')
 //mock发请求 获取goods
 export const getGoods = ()=>ajax('/shop/goods')
+// mock 获取评论
+export const getRatings = ()=>ajax('/shop/ratings')

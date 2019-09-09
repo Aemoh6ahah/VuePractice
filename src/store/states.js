@@ -16,4 +16,6 @@ export default {
   isShowFood:false,
   //Food组件内容所需对象。
   foodObj:{foodIndex:'',goodIndex:'',foodName:''},
+  //评论数组
+  ratings : []
 }

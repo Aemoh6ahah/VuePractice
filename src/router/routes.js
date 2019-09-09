@@ -4,7 +4,7 @@ import Order from '../pages/Order'
 import Login from '../pages/Login'
 import ProFile from '../pages/ProFile'
 import Shop from '../pages/Shop/Shop'
-import Ratings from '../pages/Shop/Ratings'
+import Ratings from '../pages/Shop/Ratings/Ratings'
 import Goods from '../pages/Shop/Goods'
 import Info from '../pages/Shop/Info'
 export default {

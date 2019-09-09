@@ -1,4 +1,4 @@
-import {getLocation,getFootList,getShops,userLogin,phoneLogin,getGoods} from '../api/index'
+import {getLocation,getFootList,getShops,userLogin,phoneLogin,getGoods,getRatings} from '../api/index'
 import {cutArr} from "../untils/tools"
 
 export default {
@@ -34,8 +34,14 @@ export default {
       // that.$route.push('/profile')
     }
   },
+    //发请求获取商品
     async "getGoods"(context){
       let res = await getGoods()
         context.commit("setGoods",res)
+    },
+    //发请求获取评论
+    async "getRatings"(context){
+      let res = await getRatings()
+        context.commit("setRatings",res)
     }
 }

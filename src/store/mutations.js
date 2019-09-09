@@ -113,6 +113,10 @@ export default {
   "clearFoodCar"(state){
     state.shopCar = []
     state.carItemIndex = {}
-  }
+  },
+    // 将评论数组写入state
+    "setRatings"(state,ratings){
+        state.ratings = ratings
+    }
 }
 
